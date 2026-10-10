@@ -1,38 +1,12 @@
+
+
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# import requests
-# import json
-# app_id = os.getenv("ADZUNA_APP_ID")
-# app_key = os.getenv("ADZUNA_APP_KEY")
-# url = f"https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id={app_id}&app_key={app_key}&results_per_page=5&what=python"
-# response = requests.get(url)
-# print(response.status_code)
-# data= response.json()
-# # print(json.dumps(data, indent=2))
-# jobs = data['results']
-# for job in jobs:
-#     title = job["title"]
-#     company = job["company"]["display_name"]
-#     location = job["location"]["display_name"]
-#     salary_min = job.get("salary_min")
-#     salary_max = job.get("salary_max")
-
-#     print(f"Title: {title}")
-#     print(f"Company: {company}")
-#     print(f"Location: {location}")
-#     print(f"Salary: {salary_min} - {salary_max}")
-#     print("---")
-
-# with open("data/raw_jobs.json", "w") as f:
-#     json.dump(jobs, f, indent=2)
-# print("Job data saved to raw_jobs.json")
 
 import requests
 import json
 import time
+from dotenv import load_dotenv
+load_dotenv()
 
 app_id = os.getenv("ADZUNA_APP_ID")
 app_key = os.getenv("ADZUNA_APP_KEY")
@@ -45,7 +19,11 @@ for term in search_terms:
     url = f"https://api.adzuna.com/v1/api/jobs/gb/search/1?app_id={app_id}&app_key={app_key}&results_per_page=10&what={term}"
 
     response = requests.get(url)
+    print(term,"-> status code:", response.status_code)
     data = response.json()
+    if "results" not in data:
+        print("API error",term)
+        continue
     jobs = data["results"]
 
     for job in jobs:
