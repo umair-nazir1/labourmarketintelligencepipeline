@@ -35,6 +35,8 @@ for term in search_terms:
 
     time.sleep(1)
 
+if not all_jobs:
+    raise SystemExit("No jobs fetched, not overwriting raw_jobs.json")
 with open("data/raw_jobs.json", "w") as f:
     json.dump(all_jobs, f, indent=2)
 
