@@ -95,6 +95,27 @@ python run_pipeline.py
 ```
 
 Running the pipeline again is safe: jobs that are already in the table are skipped.
+## What works today
+
+These behaviours were checked by running the pipeline, not only by reading the code:
+
+- **Full run.** `python run_pipeline.py` fetches 40 postings (10 for each of 4 search terms), cleans them and loads them into PostgreSQL in about 13 seconds on my machine.
+- **Idempotent load.** Running the load again skips postings that are already stored, so the table never holds the same id twice.
+- **Data grows over time.** Each run adds only the postings that are new since the previous run.
+- **Fail fast.** With a wrong API key the fetch step exits with an error and keeps the previous raw file. The runner then stops and does not run the clean and load steps.
+
+## Example query
+
+The best paid postings collected so far:
+
+```sql
+SELECT title, company, avg_salary
+FROM jobs
+ORDER BY avg_salary DESC NULLS LAST
+LIMIT 5;
+```
+
+Salaries are annual figures in pounds (UK data). Some of them are estimates made by Adzuna, see the known limitations below.
 
 ## Design decisions
 
